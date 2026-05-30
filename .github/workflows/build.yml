@@ -1,0 +1,86 @@
+name: Build doxtr/reactor-builder-assets image
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      use_self_hosted:
+        description: 'Run on self-hosted infrastructure?'
+        type: boolean
+        default: true
+
+env:
+  IMAGE_NAME: doxtr/reactor-builder-assets
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      max-parallel: 1 # Only 1 so upload bandwidth is not split
+      matrix:
+        include:
+          - platform: linux/arm64
+            arch: arm64
+            github_hosted_label: ubuntu-24.04-arm
+            self_hosted_label: self-hosted-arm64
+          - platform: linux/amd64
+            arch: amd64
+            github_hosted_label: ubuntu-24.04
+            self_hosted_label: self-hosted-amd64
+            
+    runs-on: ${{ (inputs.use_self_hosted == true || vars.USE_SELF_HOSTED == 'true') && matrix.self_hosted_label || matrix.github_hosted_label }}
+    timeout-minutes: 1200
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Using native CLI commands guarantees 100% compatibility with both Docker and Podman
+      - name: Build and Push Arch-Specific Image
+        timeout-minutes: 600
+        run: |
+          docker build --platform ${{ matrix.platform }} -t ${{ env.IMAGE_NAME }}:latest-${{ matrix.arch }} .
+          docker push ${{ env.IMAGE_NAME }}:latest-${{ matrix.arch }}
+
+  merge:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest
+
+      - name: Stitch Manifest List and Push
+        run: |
+          # Dynamically fetch the tags from the metadata action
+          TAGS=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          
+          # Combine the two arch-specific images sitting on Docker Hub into the final release tags
+          docker buildx imagetools create $TAGS \
+            ${{ env.IMAGE_NAME }}:latest-amd64 \
+            ${{ env.IMAGE_NAME }}:latest-arm64
