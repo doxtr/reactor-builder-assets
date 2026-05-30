@@ -18,10 +18,11 @@ permissions:
   packages: write
 
 jobs:
-  build:
+  # Both architectures compile here at the same time
+  build-and-push:
     strategy:
       fail-fast: false
-      max-parallel: 1 # Only 1 so upload bandwidth is not split
+      # max-parallel is removed so BOTH runners spin up immediately!
       matrix:
         include:
           - platform: linux/arm64
@@ -40,22 +41,49 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 1. This step runs simultaneously on both machines. Heavy lifting happens here.
+      - name: Build Arch-Specific Image Locally
+        timeout-minutes: 1200
+        run: |
+          docker build --platform ${{ matrix.platform }} -t ${{ env.IMAGE_NAME }}:latest-${{ matrix.arch }} .
+
+  # Handles the push sequentially, directly from the respective runner
+  push-sequentially:
+    needs: build-and-push
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            github_hosted_label: ubuntu-24.04-arm
+            self_hosted_label: self-hosted-arm64
+          - arch: amd64
+            github_hosted_label: ubuntu-24.04
+            self_hosted_label: self-hosted-amd64
+
+    runs-on: ${{ (inputs.use_self_hosted == true || vars.USE_SELF_HOSTED == 'true') && matrix.self_hosted_label || matrix.github_hosted_label }}
+    
+    # run one after another upload, to protect your upload bandwidth on local runners. The concurrency group is unique per workflow run, so they won't block other runs.
+    concurrency:
+      group: docker-upload-lock-${{ github.run_id }}
+    
+    steps:
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Using native CLI commands guarantees 100% compatibility with both Docker and Podman
-      - name: Build and Push Arch-Specific Image
-        timeout-minutes: 600
+      # Because the image was already built in the previous job on this exact machine,
+      # it's sitting in the local daemon. We just push it now.
+      - name: Push Image to DockerHub
         run: |
-          docker build --platform ${{ matrix.platform }} -t ${{ env.IMAGE_NAME }}:latest-${{ matrix.arch }} .
           docker push ${{ env.IMAGE_NAME }}:latest-${{ matrix.arch }}
 
+  # Final Step: Merges the manifests once both sequential pushes finish
   merge:
     runs-on: ubuntu-latest
-    needs: build
+    needs: push-sequentially
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

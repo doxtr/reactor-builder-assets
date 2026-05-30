@@ -24,7 +24,7 @@ You can build and push your own version of the image easily with:
 Tag what you want to release
 
 ``` bash
-#> export VERSION=v1.0.0 && git tag $VERSION && git push origin $VERSION
+#> export VERSION=v0.0.1 && git tag $VERSION && git push origin $VERSION
 ```
 
 Then hit 'Create a new release'on the right side of your github repository.
