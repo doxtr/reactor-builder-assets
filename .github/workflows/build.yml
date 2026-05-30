@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   # Both architectures compile here at the same time
-  build-and-push:
+  build-parallel:
     strategy:
       fail-fast: false
       # max-parallel is removed so BOTH runners spin up immediately!
@@ -39,7 +39,7 @@ jobs:
     
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # 1. This step runs simultaneously on both machines. Heavy lifting happens here.
       - name: Build Arch-Specific Image Locally
@@ -49,7 +49,7 @@ jobs:
 
   # Handles the push sequentially, directly from the respective runner
   push-sequentially:
-    needs: build-and-push
+    needs: build-parallel
     strategy:
       fail-fast: false
       matrix:
