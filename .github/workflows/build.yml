@@ -42,7 +42,6 @@ jobs:
 
       # Both runners compile heavy tasks simultaneously
       - name: Build Arch-Specific Image Locally
-        timeout-minutes: 1200
         run: |
           docker build --platform ${{ matrix.platform }} -t ${{ env.IMAGE_NAME }}:latest-${{ matrix.arch }} .
 
@@ -52,14 +51,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # RESTRICTED STEP: Uses a sequential API lock to protect network bandwidth
-      - name: Push Image to DockerHub Sequentially
+      # Step A: Wait for the lock (Ensures only one runner proceeds past this point)
+      - name: Wait for upload lock
         uses: softprops/turnstyle@v2
         with:
           abort-after-config-check: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # Unique per-workflow execution token ensures they only block each other, not separate runs
+
+      # Step B: Securely push knowing the image exists locally and bandwidth is clear
+      - name: Push Image to DockerHub
         run: |
           docker push ${{ env.IMAGE_NAME }}:latest-${{ matrix.arch }}
 
