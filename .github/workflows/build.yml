@@ -39,7 +39,7 @@ jobs:
     
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Both runners compile heavy tasks simultaneously
       - name: Build Arch-Specific Image Locally
