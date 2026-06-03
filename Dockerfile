@@ -2,7 +2,7 @@
 # STAGE 1: Builder (Compiling & Downloading)
 # ==========================================
 FROM ubuntu:24.04 AS builder
-LABEL maintainer="Jens Frey <jens.frey@coffeecrew.org>" Version="2026-05-30"
+LABEL maintainer="Jens Frey <jens.frey@coffeecrew.org>" Version="2026-06-03"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
