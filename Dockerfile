@@ -2,11 +2,11 @@
 # STAGE 1: Builder (Compiling & Downloading)
 # ==========================================
 FROM ubuntu:24.04 AS builder
-LABEL maintainer="Jens Frey <jens.frey@coffeecrew.org>" Version="2026-06-03"
+LABEL maintainer="Jens Frey <jens.frey@coffeecrew.org>" Version="2026-07-02"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG DRAWIO_VER=30.0.4
+ARG DRAWIO_VER=30.2.6
 
 # Install only the tools needed to build the venv and download assets
 RUN apt-get update && apt-get install -y --no-install-recommends \
