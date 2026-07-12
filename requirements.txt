@@ -1,7 +1,7 @@
 matplotlib
 sphinx
 sphinx-rtd-theme @ git+https://github.com/readthedocs/sphinx_rtd_theme@3.1.0
-git+https://github.com/pydata/pydata-sphinx-theme.git@v0.19.0
+git+https://github.com/pydata/pydata-sphinx-theme.git@v0.20.0
 git+https://github.com/authsec/sphinx-diagrams/
 #sphinx-diagrams
 # d2 lang support
