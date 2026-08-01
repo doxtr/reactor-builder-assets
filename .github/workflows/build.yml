@@ -47,14 +47,14 @@ jobs:
           docker build --platform ${{ matrix.platform }} -t ${{ env.IMAGE_NAME }}:latest-${{ matrix.arch }} .
 
       - name: Login to DockerHub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # Step A: Wait for the lock (Ensures only one runner proceeds past this point)
       - name: Wait for upload lock
-        uses: softprops/turnstyle@v2
+        uses: softprops/turnstyle@v3
         with:
           abort-after-config-check: false
         env:
@@ -74,7 +74,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Login to DockerHub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
