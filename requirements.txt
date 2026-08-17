@@ -46,7 +46,6 @@ bibtexparser
 myst-parser
 docxbuilder
 sphinx-jinja2
-sphinxcontrib-drawio
 sphinxawesome-theme
 hieroglyph
 bibulous
@@ -102,3 +101,6 @@ pandoc
 sphinx-subfigure
 setuptools
 pbr
+doxtr-pdf-theme-core
+git+https://github.com/doxtr/doxtr-drawio
+git+https://github.com/doxtr/doxtr-dynacsv
