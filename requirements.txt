@@ -103,4 +103,4 @@ setuptools
 pbr
 doxtr-pdf-theme-core
 git+https://github.com/doxtr/doxtr-drawio
-git+https://github.com/doxtr/doxtr-dynacsv
+git+https://github.com/doxtr/doxtr-dynacsv#subdirectory=doxtr-dynacsv
