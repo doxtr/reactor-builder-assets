@@ -95,5 +95,6 @@ setuptools
 pbr
 pytest
 doxtr-pdf-theme-core
+doxtr-roadmap
 git+https://github.com/doxtr/doxtr-drawio
 git+https://github.com/doxtr/doxtr-dynacsv#subdirectory=doxtr-dynacsv
