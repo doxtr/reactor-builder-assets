@@ -1,12 +1,18 @@
 # ==========================================
 # STAGE 1: Builder (Compiling & Downloading)
 # ==========================================
-FROM ubuntu:24.04 AS builder
-LABEL maintainer="Jens Frey <jens.frey@coffeecrew.org>" Version="2026-08-17"
+# Fonts are no longer built here; they live in a dedicated fonts image
+# (see Dockerfile.fonts) and are imported directly by the runtime image.
+FROM ubuntu:26.04 AS builder
+LABEL maintainer="Jens Frey <jens.frey@coffeecrew.org>" Version="2026-09-06"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG DRAWIO_VER=31.1.8
+# Check for releases at https://github.com/jgraph/drawio-desktop/releases
+ARG DRAWIO_VER=31.4.4
+
+# Check for releases at https://github.com/plantuml/plantuml/releases
+ARG PLANTUML_VER=1.2026.8
 
 # Install only the tools needed to build the venv and download assets
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -20,21 +26,12 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 2. Download and extract fonts to a staging directory
-WORKDIR /build-fonts
-RUN git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git \
-    && curl -sSL https://github.com/google/fonts/archive/main.zip -o gfonts.zip \
-    && unzip -q gfonts.zip \
-    && mkdir -p /staging/fonts \
-    && cp -R nerd-fonts/patched-fonts/* /staging/fonts/ 2>/dev/null || true \
-    && cp -R fonts-main/ofl/* /staging/fonts/ 2>/dev/null || true \
-    && cp -R fonts-main/apache/* /staging/fonts/ 2>/dev/null || true \
-    && cp -R fonts-main/ufl/* /staging/fonts/ 2>/dev/null || true
+WORKDIR /staging
 
-# 3. Download the latest PlantUML
-RUN wget "https://sourceforge.net/projects/plantuml/files/plantuml.jar" -O /staging/plantuml.jar --no-check-certificate
+# 2. Download the latest PlantUML
+RUN curl -L "https://github.com/plantuml/plantuml/releases/download/v${PLANTUML_VER}/plantuml-${PLANTUML_VER}.jar" -o plantuml.jar
 
-# 4. Get latest Draw.io
+# 3. Get latest Draw.io
 RUN ARCH=$(dpkg --print-architecture) && \
     if [ "$ARCH" = "amd64" ]; then \
         URL="https://github.com/jgraph/drawio-desktop/releases/download/v${DRAWIO_VER}/drawio-amd64-${DRAWIO_VER}.deb"; \
@@ -43,8 +40,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
     else \
         echo "Unsupported architecture: $ARCH" && exit 1; \
     fi && \
-    wget -q -O /tmp/drawio.deb "$URL"
+    curl -L "$URL" -o drawio.deb
 
-# 5. Install d2 binary, as this is used in e.g. the 'terrastruct.d2' vscode extension
+# 4. Install d2 binary, as this is used in e.g. the 'terrastruct.d2' vscode extension
 RUN curl -fsSL https://d2lang.com/install.sh | sh -s --
-

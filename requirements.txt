@@ -1,7 +1,7 @@
 matplotlib
 sphinx
 sphinx-rtd-theme @ git+https://github.com/readthedocs/sphinx_rtd_theme@3.1.0
-git+https://github.com/pydata/pydata-sphinx-theme.git@v0.20.0
+git+https://github.com/pydata/pydata-sphinx-theme.git@v0.21.0
 git+https://github.com/authsec/sphinx-diagrams/
 #sphinx-diagrams
 # d2 lang support
@@ -23,14 +23,12 @@ sphinxcontrib-excel-table
 sphinxcontrib-excel-table-plus
 sphinxcontrib-exceltable
 sphinxcontrib-confluencebuilder
-sphinxcontrib-versioning
 sphinxcontrib-httpdomain
 sphinxcontrib-openapi
 pybtex-apa-style
 sphinx-exec-directive
 groundwork-sphinx-theme
 sphinx-book-theme
-groundwork-sphinx-theme
 sphinx-icon
 esbonio
 sphinx-tags
@@ -47,10 +45,6 @@ myst-parser
 docxbuilder
 sphinx-jinja2
 sphinxawesome-theme
-hieroglyph
-bibulous
-deck2pdf
-gitdb2
 jupyter
 jupyter-book
 jupyterbook-latex
@@ -75,7 +69,6 @@ pysass
 rst2pdf
 rstcheck
 smmap
-recommonmark
 soupsieve
 smartypants
 plotly
@@ -85,7 +78,6 @@ markdown2
 typogrify
 diagrams
 tabulate
-libsass
 rcssmin
 arrow
 autopep8
@@ -101,6 +93,7 @@ pandoc
 sphinx-subfigure
 setuptools
 pbr
+pytest
 doxtr-pdf-theme-core
 git+https://github.com/doxtr/doxtr-drawio
 git+https://github.com/doxtr/doxtr-dynacsv#subdirectory=doxtr-dynacsv
