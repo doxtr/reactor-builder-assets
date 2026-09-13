@@ -4,12 +4,12 @@
 # Fonts are no longer built here; they live in a dedicated fonts image
 # (see Dockerfile.fonts) and are imported directly by the runtime image.
 FROM ubuntu:26.04 AS builder
-LABEL maintainer="Jens Frey <jens.frey@coffeecrew.org>" Version="2026-09-07"
+LABEL maintainer="Jens Frey <jens.frey@coffeecrew.org>" Version="2026-09-13"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Check for releases at https://github.com/jgraph/drawio-desktop/releases
-ARG DRAWIO_VER=31.4.4
+ARG DRAWIO_VER=31.4.5
 
 # Check for releases at https://github.com/plantuml/plantuml/releases
 ARG PLANTUML_VER=1.2026.8
