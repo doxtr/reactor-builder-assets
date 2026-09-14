@@ -4,7 +4,7 @@
 # Fonts are no longer built here; they live in a dedicated fonts image
 # (see Dockerfile.fonts) and are imported directly by the runtime image.
 FROM ubuntu:26.04 AS builder
-LABEL maintainer="Jens Frey <jens.frey@coffeecrew.org>" Version="2026-09-13"
+LABEL maintainer="Jens Frey <jens.frey@coffeecrew.org>" Version="2026-09-15"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
