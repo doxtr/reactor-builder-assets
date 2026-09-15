@@ -96,5 +96,6 @@ pbr
 pytest
 doxtr-pdf-theme-core
 doxtr-roadmap
+doxtr-d2
 git+https://github.com/doxtr/doxtr-drawio
 git+https://github.com/doxtr/doxtr-dynacsv#subdirectory=doxtr-dynacsv
