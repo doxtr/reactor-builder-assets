@@ -99,3 +99,15 @@ doxtr-roadmap
 doxtr-d2
 git+https://github.com/doxtr/doxtr-drawio
 git+https://github.com/doxtr/doxtr-dynacsv#subdirectory=doxtr-dynacsv
+
+# doxtr-rag runtime dependencies
+pydantic>=2,<3
+chromadb>=1.0,<2
+fastembed>=0.7,<1
+onnxruntime>=1.17
+pypdf>=4.0
+openpyxl>=3.1
+python-docx>=1.1
+python-pptx>=0.6.23
+odfpy>=1.4.1
+httpx>=0.27
