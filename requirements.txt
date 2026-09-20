@@ -4,8 +4,6 @@ sphinx-rtd-theme @ git+https://github.com/readthedocs/sphinx_rtd_theme@3.1.0
 git+https://github.com/pydata/pydata-sphinx-theme.git@v0.21.0
 git+https://github.com/authsec/sphinx-diagrams/
 #sphinx-diagrams
-# d2 lang support
-metapensiero.sphinx.d2
 sphinxcontrib-xlink
 sphinxcontrib.plantuml
 sphinxcontrib.nwdiag
@@ -96,7 +94,10 @@ pbr
 pytest
 doxtr-pdf-theme-core
 doxtr-roadmap
-doxtr-d2
+# d2 lang support
+doxtr-d2[theme,xlink]
+doxtr-music[all]
+doxtr-rag
 git+https://github.com/doxtr/doxtr-drawio
 git+https://github.com/doxtr/doxtr-dynacsv#subdirectory=doxtr-dynacsv
 
